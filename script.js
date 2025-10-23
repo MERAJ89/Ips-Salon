@@ -4,20 +4,46 @@ document.addEventListener('DOMContentLoaded', function () {
   const burger = document.getElementById('burger');
   const nav = document.querySelector('.main-nav');
   burger.setAttribute('aria-expanded', 'false');
+  // helper to animate nav open/close
+  const navList = nav ? nav.querySelector('ul') : null;
+  function openNav(){
+    if(!nav) return;
+    nav.classList.add('open');
+    if(navList){
+      navList.classList.remove('nav-closing');
+      navList.classList.add('nav-opening');
+      // cleanup after animation
+      setTimeout(()=> navList.classList.remove('nav-opening'), 420);
+    }
+    burger.setAttribute('aria-expanded', 'true');
+    burger.style.display = 'none';
+  }
+  function closeNav(){
+    if(!nav) return;
+    if(navList){
+      navList.classList.remove('nav-opening');
+      navList.classList.add('nav-closing');
+      // wait for closing animation then hide
+      setTimeout(()=>{
+        nav.classList.remove('open');
+        navList.classList.remove('nav-closing');
+      }, 300);
+    } else {
+      nav.classList.remove('open');
+    }
+    burger.setAttribute('aria-expanded', 'false');
+    burger.style.display = '';
+  }
+
   burger.addEventListener('click', () => {
-    const isOpen = nav.classList.toggle('open');
-    burger.setAttribute('aria-expanded', String(isOpen));
-    // hide burger while menu is open to match requested behaviour
-    burger.style.display = isOpen ? 'none' : '';
+    openNav();
   });
 
   // Mobile nav close button (inside nav)
   const navClose = document.getElementById('navClose');
   if(navClose){
     navClose.addEventListener('click', ()=>{
-      nav.classList.remove('open');
-      burger.setAttribute('aria-expanded', 'false');
-      burger.style.display = '';
+      closeNav();
     });
   }
 
@@ -27,13 +53,32 @@ document.addEventListener('DOMContentLoaded', function () {
       const target = document.querySelector(this.getAttribute('href'));
       if(target){
         e.preventDefault();
-        nav.classList.remove('open');
-        burger.setAttribute('aria-expanded', 'false');
-        burger.style.display = '';
+        closeNav();
         target.scrollIntoView({behavior:'smooth', block:'start'});
       }
     });
   });
+
+  // Close mobile nav when user scrolls down
+  (function(){
+    let lastY = window.scrollY || 0;
+    let ticking = false;
+    function onScroll(){
+      const y = window.scrollY || 0;
+      if (!ticking){
+        ticking = true;
+        requestAnimationFrame(()=>{
+          // if user scrolled down and nav is open, close it
+          if (y > lastY) {
+            if (nav && nav.classList.contains('open')) closeNav();
+          }
+          lastY = y;
+          ticking = false;
+        });
+      }
+    }
+    window.addEventListener('scroll', onScroll, {passive:true});
+  })();
 
   // Gallery lightbox
   const galleryItems = document.querySelectorAll('.gallery-item');
