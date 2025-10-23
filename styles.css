@@ -159,7 +159,7 @@ body{
   background:var(--gold);
   color:#111;
   box-shadow:0 6px 18px rgba(212,175,55,0.12);
-  margin-right: 28px;
+  margin-right: 19px;
 }
 .btn-ghost{
   background:transparent;border:1px solid rgba(0,0,0,0.06);
