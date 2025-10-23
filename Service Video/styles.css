@@ -114,23 +114,34 @@ body{
 }
 .main-nav a:hover{background:rgba(0,0,0,0.03)}
 
-/* Mobile close button inside nav */
+/* Mobile close button inside nav - fixed so position is consistent across devices */
 .nav-close {
-    display: none;
-    position: absolute;
-    top: 38px;
-    right: 140px;
-    width: 25px;
-    height: 25px;
-    border-radius: 50%;
-    background: #000;
-    border: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  /* hidden by default on larger screens; shown when mobile nav is open */
+  display: none;
+  position: fixed; /* fixed to viewport to avoid shifting */
+  top: 14px; /* comfortable tappable area from top */
+  right: 14px; /* aligned to right edge consistently */
+  width: 44px;
+  height: 44px;
+  padding: 6px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.9);
+  border: 0;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  z-index: 2500; /* above nav overlay */
 }
 .nav-close svg{display:block}
+
+/* show close button when mobile nav is opened */
+.main-nav.open .nav-close{
+  display:flex;
+}
+
+/* smaller variant for very narrow screens */
+/* @media (max-width:420px){
+  */
 
 /* Buttons */
 .btn{
@@ -293,7 +304,7 @@ body{
   position:fixed;right:18px;border-radius:50%;width:52px;height:52px;display:flex;align-items:center;justify-content:center;
   box-shadow:0 10px 30px rgba(0,0,0,0.12);z-index:1500;text-decoration:none;color:#fff
 }
-.whatsapp{bottom:92px;background:linear-gradient(180deg,var(--gold),#cfa12a)}
+.whatsapp{bottom:92px;background:#25D366}
 .call{bottom:22px;background:#2e2e2e}
 
 /* Social links in contact/map area */
@@ -315,6 +326,7 @@ body{
   .about-grid{grid-template-columns:1fr}
   .contact-grid{grid-template-columns:1fr}
 }
+
 @media (max-width:720px){
   .header-inner{padding:0.6rem 0 }
   .main-nav{display:none}
@@ -325,30 +337,59 @@ body{
   .gallery-grid{grid-template-columns:repeat(2,1fr)}
   .sticky{right:14px}
   .brand-text{font-size:1rem}
-  
-}
 
-.main-nav ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: 1rem;
+  /* Keep the nav list neutral on mobile; when opened, .main-nav.open rules control layout */
+  .main-nav ul{background:transparent;gap:1rem}
+
+  .main-nav ul {
     background: white;
-    align-items: center;
-    width: 160px;
-    padding-bottom: 50px;
-    margin-left: 202px;
-    /* margin-top: 30px; */
-    margin-top: 10px;
+    gap: 1rem;
+    width: 150px;
+    padding-bottom: 30px;
+    /* margin-left: 206px; */
+    position: absolute;
+    right: 6px;
+    top: 24px;
+}
+ .nav-close{ top:95px; right:20px; width:25px; height:25px; padding:5px 
+}
 }
 
+/* Mobile menu open overlay (consistent across devices) */
+.main-nav.open{
+  position:fixed;
+  inset:64px 0 0 0;
+  background:#fff;
+  padding:1.25rem 1rem;
+  z-index:1200;
+  display:block;
+}
+.main-nav.open ul{
+  display:flex;
+  flex-direction:column;
+  gap:0.75rem;
+  padding-top:0.75rem;
+  align-items:flex-start;
+}
 
+/* Mobile nav open/close animations */
+.main-nav.open ul .nav-opening,
+.main-nav.open ul.nav-opening{
+  animation: navSlideIn 320ms cubic-bezier(.2,.9,.3,1) forwards;
+}
+.main-nav.open ul .nav-closing,
+.main-nav.open ul.nav-closing{
+  animation: navSlideOut 260ms cubic-bezier(.4,.0,.2,1) forwards;
+}
 
-/* Mobile menu open */
-.main-nav.open{position:fixed;inset:64px 0 0 0;background:#fff;padding:1.25rem 1rem;z-index:1200;display:block}
-.main-nav.open ul{flex-direction:column;gap:0.75rem;padding-top:0.75rem}
-.main-nav.open .main nav-close{display:flex}
+@keyframes navSlideIn{
+  from{opacity:0;transform:translateY(-12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes navSlideOut{
+  from{opacity:1;transform:translateY(0)}
+  to{opacity:0;transform:translateY(-12px)}
+}
 
 /* Hide burger button while nav is open (mobile) */
 @media (max-width:720px){
